@@ -9,10 +9,13 @@ Save and submit the completed file for your homework submission.
 ### Step 1: Create, Extract, Compress, and Manage tar Backup Archives
 
 1. Command to **extract** the `TarDocs.tar` archive to the current directory:
+sudo tar xvvf TarDocs.tar -C ~/Projects
 
 2. Command to **create** the `Javaless_Doc.tar` archive from the `TarDocs/` directory, while excluding the `TarDocs/Documents/Java` directory:
+tar -cvf /home/sysadmin/Projects/Javaless_Docs.tar --exclude='/home/sysadmin/Projects/TarDocs/Documents/Java' /home/sysadmin/Projects/TarDocs/Documents
 
 3. Command to ensure `Java/` is not in the new `Javaless_Docs.tar` archive:
+tar xvf Javaless_Docs.tar | grep -il "Java"
 
 **Bonus** 
 - Command to create an incremental archive called `logs_backup_tar.gz` with only changed files to `snapshot.file` for the `/var/log` directory:
@@ -20,27 +23,45 @@ Save and submit the completed file for your homework submission.
 #### Critical Analysis Question
 
 - Why wouldn't you use the options `-x` and `-c` at the same with `tar`?
+'-c' is used to create and '-x' is used to extract. It isn't possible to create and extract in the same command.
 
 ---
 
 ### Step 2: Create, Manage, and Automate Cron Jobs
 
 1. Cron job for backing up the `/var/log/auth.log` file:
-
+0 6 * * 3 tar -zcf /auth_backup.tgz /var/log/auth.log
 ---
 
 ### Step 3: Write Basic Bash Scripts
 
 1. Brace expansion command to create the four subdirectories:
+mkdir -p ~/backups/{freemem,diskuse,openlist,freedisk}
 
 2. Paste your `system.sh` script edits below:
+#!/bin/bash
 
-    ```bash
-    #!/bin/bash
-    [Your solution script contents here]
-    ```
+# INSTRUCTIONS: Edit the following placeholder command and output filepaths
+# For example: cpu_usage_tool > ~/backups/cpuuse/cpu_usage.txt
+# The cpu_usage_tool is the command and ~/backups/cpuuse/cpu_usage.txt is the filepath
+# In the above example, the `cpu_usage_tool` command will output CPU usage information into a `cpu_usage.txt` file.
+# Do not forget to use the -h option for free memory, disk usage, and free disk space
+
+# Free memory output to a free_mem.txt file
+free -t -h >> ~/backups/freemem/free_mem.txt
+
+# Disk usage output to a disk_usage.txt file
+du -h >> ~/backups/diskuse/disk_usage.txt
+
+# List open files to a open_list.txt file
+lsof >> ~/backups/openlist/open_list.txt
+
+# Free disk space to a free_disk.txt file
+df -h >> ~/backups/freedisk/free_disk.txt
+
 
 3. Command to make the `system.sh` script executable:
+sudo chmod +x system.sh
 
 **Optional**
 - Commands to test the script and confirm its execution:
@@ -58,9 +79,16 @@ Save and submit the completed file for your homework submission.
 
     - Add your config file edits below:
 
-    ```bash
-    [Your logrotate scheme edits here]
-    ```
+    /var/log/auth.log {
+    rotate 7
+    weekly
+    notifempty
+    missingok
+    delaycompress   
+    compress
+    endscript
+    }
+
 ---
 
 ### Bonus: Check for Policy and File Violations
